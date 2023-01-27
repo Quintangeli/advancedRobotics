@@ -1,1 +1,4 @@
 // Nicole, Leah, Zeph, Wilder
+// Our safe will only be able to be opened by finger print and, if the incorrect finger print is entered, alrarms will go off and lights will flash, the alarms
+// will stop and safe will reset only when someone walks far enough away from the safe 
+// Compnents: Finger Print Reader, Lidar Sensor, Servo Motor, Speaker, Leds, 3D Printed Safe, Hinges 
