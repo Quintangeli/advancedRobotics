@@ -46,29 +46,33 @@ void loop(){
   if(fingerprintID == 1) { 
     IDname = "Nicole";
     Serial.println("Fingerprint Identified: Nicole");
+    displayUserGreeting(IDname);  
     correctFingerprint();
-    displayUserGreeting(IDname);   
+
     
   }  
   else if(fingerprintID == 2){
     IDname = "Leah"; 
     Serial.println("Fingerprint Identified: Leah");
+    displayUserGreeting(IDname); 
     correctFingerprint(); 
-    displayUserGreeting(IDname);            
+
   }
   
   else if(fingerprintID == 3){
     IDname = "Zeph"; 
     Serial.println("Fingerprint Identified: Zeph");
+    displayUserGreeting(IDname);  
     correctFingerprint(); 
-  displayUserGreeting(IDname);            
+
   }
   
   else if(fingerprintID == 4){
     IDname = "Wilder"; 
     Serial.println("Fingerprint Identified: Wilder");
+    displayUserGreeting(IDname); 
     correctFingerprint();
-    displayUserGreeting(IDname);            
+
   }
   
   else if(fingerprintID != 1 && fingerprintID != 2 &&  fingerprintID != 3 && fingerprintID != 4) {
@@ -138,3 +142,7 @@ void correctFingerprint() {
     delay(500); 
 
 } 
+
+
+
+
