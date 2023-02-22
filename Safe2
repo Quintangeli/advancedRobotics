@@ -1,4 +1,21 @@
-// Nicole, Leah, Zeph, Wilder
-// Our safe will only be able to be opened by finger print and, if the incorrect finger print is entered, alrarms will go off and lights will flash, the alarms
-// will stop and safe will reset only when someone walks far enough away from the safe 
-// Compnents: Finger Print Reader, Lidar Sensor, Servo Motor, Speaker, Leds, 3D Printed Safe, Hinges 
+#include <Arduino.h>
+#include <Wire.h>        // Instantiate the Wire library
+#include <TFLI2C.h>      // TFLuna-I2C Library v.0.1.1
+// Do not use pin 6 and make sure this is wired correctly for iic
+TFLI2C tflI2C;
+
+int16_t  tfDist;    // distance in centimeters
+int16_t  tfAddr = TFL_DEF_ADR;  // Use this default I2C address
+
+void setup() {
+  Serial.begin(9600);  // Initalize serial port *seems to work with 9600 and 115200
+  Wire.begin();           // Initalize Wire library
+}
+
+void loop() {
+
+  if (tflI2C.getData(tfDist, tfAddr)) {
+    Serial.println(String(tfDist) + " cm / " + String(tfDist / 2.54) + " inches");
+  }
+  delay(50);
+}
