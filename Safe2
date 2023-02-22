@@ -110,7 +110,7 @@ void displayMainScreen(){
   display.setCursor(52,20);
   display.println("...");  
   display.display();
-  delay(2000);
+  delay(100);
 }
 
 void displayUserGreeting(String Name){
@@ -122,7 +122,7 @@ void displayUserGreeting(String Name){
   display.setCursor(0,15);
   display.print(Name); 
   display.display();
-  delay(5000);
+  delay(100);
   fingerprintID = 0; 
 }
 
@@ -139,7 +139,7 @@ void correctFingerprint() {
     digitalWrite(ledPinGreen, HIGH);
     delay(500);
     digitalWrite(ledPinGreen, LOW);
-    delay(500); 
+    delay(100); 
 
 } 
 
