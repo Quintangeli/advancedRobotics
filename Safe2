@@ -1,4 +1,30 @@
-// Nicole, Leah, Zeph, Wilder
-// Our safe will only be able to be opened by finger print and, if the incorrect finger print is entered, alrarms will go off and lights will flash, the alarms
-// will stop and safe will reset only when someone walks far enough away from the safe 
-// Compnents: Finger Print Reader, Lidar Sensor, Servo Motor, Speaker, Leds, 3D Printed Safe, Hinges 
+/Turn on an LED if 2 buttons //1 side of button connected to GND
+//Other side of button connected to digital pin 2 
+
+const int buttonPin3 = 3; 
+const int buttonPin4 = 4; 
+const int ledPin = 5; 
+
+int buttonState3;
+int buttonState4; 
+
+void setup() { 
+
+  pinMode(buttonPin3, INPUT_PULLUP);
+  pinMode(buttonPin4, INPUT_PULLUP); 
+  pinMode(ledPin, OUTPUT);    
+
+}
+
+void loop() {
+  
+  buttonState3 = digitalRead(buttonPin3);
+  buttonState4 = digitalRead(buttonPin4); 
+  
+  if (buttonState3 == LOW && buttonState4 == LOW) {
+  digitalWrite(ledPin, HIGH);        //turns LED ON
+delay(1000);                    //pause to see led
+digitalWrite(ledPin, LOW);        //turns LED ON
+
+}
+}
