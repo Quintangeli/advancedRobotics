@@ -8,6 +8,9 @@ Adafruit_SSD1306 display(OLED_RESET);
 #include <SoftwareSerial.h>
 SoftwareSerial mySerial(2, 3);
 
+const int ledPinRed = 9;
+const int ledPinGreen = 11;
+
 Adafruit_Fingerprint finger = Adafruit_Fingerprint(&mySerial);
 int fingerprintID = 0;
 String IDname;
@@ -17,11 +20,14 @@ void setup(){
   // set the data rate for the sensor serial port
   finger.begin(57600);
   
+  pinMode(ledPinRed, OUTPUT);
+  pinMode(ledPinGreen, OUTPUT);
+  
   if (finger.verifyPassword()) {
-    Serial.println("Found fingerprint sensor!");
+    Serial.println("Fingerprint Sensor Found");
   } 
   else {
-    Serial.println("Did not find fingerprint sensor :(");
+    Serial.println("Connection Error: Fingerprint Sensor Not Found");
     while (1) { delay(1); }
   }
 
@@ -39,24 +45,29 @@ void loop(){
   delay(50);
   if(fingerprintID == 1) { 
     IDname = "Nicole";
-    Serial.println("Hello Nicole");
-    displayUserGreeting(IDname);            
+    Serial.println("Fingerprint Identified: Nicole");
+    correctFingerprint();
+    displayUserGreeting(IDname);   
+    
   }  
   else if(fingerprintID == 2){
     IDname = "Leah"; 
-    Serial.println("Hello Leah");
+    Serial.println("Fingerprint Identified: Leah");
+    correctFingerprint(); 
     displayUserGreeting(IDname);            
   }
   
   else if(fingerprintID == 3){
     IDname = "Zeph"; 
-    Serial.println("Hello Zeph");
-    displayUserGreeting(IDname);            
+    Serial.println("Fingerprint Identified: Zeph");
+    correctFingerprint(); 
+  displayUserGreeting(IDname);            
   }
   
   else if(fingerprintID == 4){
     IDname = "Wilder"; 
-    Serial.println("Hello Wilder");
+    Serial.println("Fingerprint Identified: Wilder");
+    correctFingerprint();
     displayUserGreeting(IDname);            
   }
   
@@ -110,3 +121,20 @@ void displayUserGreeting(String Name){
   delay(5000);
   fingerprintID = 0; 
 }
+
+void correctFingerprint() {
+  
+    digitalWrite(ledPinGreen, HIGH);
+    delay(500);
+    digitalWrite(ledPinGreen, LOW);
+    delay(500); 
+    digitalWrite(ledPinGreen, HIGH);
+    delay(500);
+    digitalWrite(ledPinGreen, LOW);
+    delay(500); 
+    digitalWrite(ledPinGreen, HIGH);
+    delay(500);
+    digitalWrite(ledPinGreen, LOW);
+    delay(500); 
+
+} 
