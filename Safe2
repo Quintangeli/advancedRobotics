@@ -1,14 +1,18 @@
-//Wire Green LED to digital pin 11
-//Wire Red LED to digital pin 9
-
 #include <Wire.h>
+#include <Arduino.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
+#include <TFLI2C.h> 
 #define OLED_RESET 4
-Adafruit_SSD1306 display(OLED_RESET);
-
 #include <Adafruit_Fingerprint.h>
 #include <SoftwareSerial.h>
+
+Adafruit_SSD1306 display(OLED_RESET);
+
+TFLI2C tflI2C;
+int16_t  tfDist;  
+int16_t  tfAddr = TFL_DEF_ADR;
+
 SoftwareSerial mySerial(2, 3);
 
 const int ledPinRed = 9;
@@ -17,9 +21,11 @@ const int ledPinGreen = 11;
 Adafruit_Fingerprint finger = Adafruit_Fingerprint(&mySerial);
 int fingerprintID = 0;
 String IDname;
+
 void setup(){
   //Fingerprint sensor module setup
   Serial.begin(9600);
+  Wire.begin();
   // set the data rate for the sensor serial port
   finger.begin(57600);
   
@@ -46,6 +52,12 @@ void loop(){
   fingerprintID = getFingerprintIDez();
   Serial.println(fingerprintID); 
   delay(50);
+  
+ if (tflI2C.getData(tfDist, tfAddr)) {
+    Serial.println(String(tfDist) + " cm / " + String(tfDist / 2.54) + " inches");
+  }
+  delay(50); 
+  
   if(fingerprintID == 1) { 
     IDname = "Nicole";
     Serial.println("Fingerprint Identified: Nicole");
@@ -78,8 +90,11 @@ void loop(){
 
   }
   
-  else if(fingerprintID != 1 && fingerprintID != 2 &&  fingerprintID != 3 && fingerprintID != 4) {
+  if(tfDist < 20 && fingerprintID != 1 && fingerprintID != 2 &&  fingerprintID != 3 && fingerprintID != 4) {
+  delay(1500); 
   Serial.println("Incorrect"); 
+  incorrectFingerprint(); 
+
 }
 
 }
@@ -142,10 +157,23 @@ void correctFingerprint() {
     digitalWrite(ledPinGreen, HIGH);
     delay(500);
     digitalWrite(ledPinGreen, LOW);
-    delay(100); 
+    delay(500); 
 
 } 
 
-
-
-
+void incorrectFingerprint() {
+  
+    digitalWrite(ledPinRed, HIGH);
+    delay(500);
+    digitalWrite(ledPinRed, LOW);
+    delay(500); 
+    digitalWrite(ledPinRed, HIGH);
+    delay(500);
+    digitalWrite(ledPinRed, LOW);
+    delay(500); 
+    digitalWrite(ledPinRed, HIGH);
+    delay(500);
+    digitalWrite(ledPinRed, LOW);
+    delay(500); 
+    
+}
