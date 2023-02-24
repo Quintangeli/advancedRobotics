@@ -93,6 +93,7 @@ void loop(){
   if(tfDist < 20 && fingerprintID != 1 && fingerprintID != 2 &&  fingerprintID != 3 && fingerprintID != 4) {
   delay(1500); 
   Serial.println("Incorrect"); 
+  displayIncorrectGreeting();
   incorrectFingerprint(); 
 
 }
@@ -139,6 +140,18 @@ void displayUserGreeting(String Name){
   display.print("Hello");
   display.setCursor(0,15);
   display.print(Name); 
+  display.display();
+  delay(100);
+  fingerprintID = 0; 
+}
+
+void displayIncorrectGreeting(){
+  display.clearDisplay();
+  display.setTextColor(WHITE);
+  display.setTextSize(2);
+  display.setCursor(0,0);
+  display.print("Incorrect");
+  display.setCursor(0,15);
   display.display();
   delay(100);
   fingerprintID = 0; 
