@@ -1,3 +1,9 @@
+//Wire red to GND
+//Wire yellow to GND
+//Wire Black to 3.3V
+//Wire Green to SCL
+//Wire White to SDA
+
 #include <Arduino.h>
 #include <Wire.h>        // Instantiate the Wire library
 #include <TFLI2C.h>      // TFLuna-I2C Library v.0.1.1
