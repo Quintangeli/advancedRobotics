@@ -1,4 +1,201 @@
-// Nicole, Leah, Zeph, Wilder
-// Our safe will only be able to be opened by finger print and, if the incorrect finger print is entered, alrarms will go off and lights will flash, the alarms
-// will stop and safe will reset only when someone walks far enough away from the safe 
-// Compnents: Finger Print Reader, Lidar Sensor, Servo Motor, Speaker, Leds, 3D Printed Safe, Hinges 
+#include <Wire.h>
+#include <Arduino.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
+#include <TFLI2C.h> 
+#define OLED_RESET 4
+#include <Adafruit_Fingerprint.h>
+#include <SoftwareSerial.h>
+
+#include <Servo.h>
+Servo myServo;
+
+Adafruit_SSD1306 display(OLED_RESET);
+
+TFLI2C tflI2C;
+int16_t  tfDist;  
+int16_t  tfAddr = TFL_DEF_ADR;
+
+SoftwareSerial mySerial(2, 3);
+
+const int ledPinRed = 9;
+const int ledPinGreen = 11;
+
+Adafruit_Fingerprint finger = Adafruit_Fingerprint(&mySerial);
+int fingerprintID = 0;
+String IDname;
+
+void setup(){
+  myServo.attach(5);
+  myServo.write(90);
+  //Fingerprint sensor module setup
+  Serial.begin(9600);
+  Wire.begin();
+  // set the data rate for the sensor serial port
+  finger.begin(57600);
+  
+  pinMode(ledPinRed, OUTPUT);
+  pinMode(ledPinGreen, OUTPUT);
+  
+  if (finger.verifyPassword()) {
+    Serial.println("Fingerprint Sensor Found");
+  } 
+  else {
+    Serial.println("Connection Error: Fingerprint Sensor Not Found");
+    while (1) { delay(1); }
+  }
+
+  //OLED display setup
+  Wire.begin();
+  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
+  //displays main screen
+  displayMainScreen();
+}
+
+void loop(){
+  displayMainScreen();
+  fingerprintID = getFingerprintIDez();
+  Serial.println(fingerprintID); 
+  delay(50);
+  
+ if (tflI2C.getData(tfDist, tfAddr)) {
+    Serial.println(String(tfDist) + " cm / " + String(tfDist / 2.54) + " inches");
+  }
+  delay(50); 
+  
+  if(fingerprintID == 1) { 
+    IDname = "Nicole";
+    Serial.println("Fingerprint Identified: Nicole");
+    myServo.write(0);
+    displayUserGreeting(IDname);  
+    correctFingerprint();
+
+    
+  }  
+  else if(fingerprintID == 2){
+    IDname = "Leah"; 
+    Serial.println("Fingerprint Identified: Leah");
+    myServo.write(0);
+    displayUserGreeting(IDname); 
+    correctFingerprint(); 
+
+  }
+  
+  else if(fingerprintID == 3){
+    IDname = "Zeph"; 
+    Serial.println("Fingerprint Identified: Zeph");
+    myServo.write(0);
+    displayUserGreeting(IDname);  
+    correctFingerprint(); 
+
+  }
+  
+  else if(fingerprintID == 4){
+    IDname = "Wilder"; 
+    Serial.println("Fingerprint Identified: Wilder");
+    myServo.write(0);
+    displayUserGreeting(IDname); 
+    correctFingerprint();
+
+  }
+  
+  if(tfDist < 20 && fingerprintID != 1 && fingerprintID != 2 &&  fingerprintID != 3 && fingerprintID != 4) {
+  delay(1500); 
+  Serial.println("Incorrect"); 
+  displayIncorrectGreeting();
+  incorrectFingerprint(); 
+
+}
+
+}
+// returns -1 if failed, otherwise returns ID #
+int getFingerprintIDez() {
+  uint8_t p = finger.getImage();
+  if (p != FINGERPRINT_OK)  return -1;
+
+  p = finger.image2Tz();
+  if (p != FINGERPRINT_OK)  return -1;
+
+  p = finger.fingerFastSearch();
+  if (p != FINGERPRINT_OK)  return -1;
+  
+  // found a match!
+  Serial.print("Found ID #"); 
+  Serial.print(finger.fingerID); 
+  Serial.print(" with confidence of "); 
+  Serial.println(finger.confidence);
+  return finger.fingerID; 
+}
+
+void displayMainScreen(){
+  display.clearDisplay();
+  display.setTextSize(1);
+  display.setTextColor(WHITE);
+  display.setCursor(7,5);
+  display.println("Waiting fingerprint");
+  display.setTextSize(1);
+  display.setTextColor(WHITE);
+  display.setCursor(52,20);
+  display.println("...");  
+  display.display();
+  delay(100);
+}
+
+void displayUserGreeting(String Name){
+  display.clearDisplay();
+  display.setTextColor(WHITE);
+  display.setTextSize(2);
+  display.setCursor(0,0);
+  display.print("Hello");
+  display.setCursor(0,15);
+  display.print(Name); 
+  display.display();
+  delay(100);
+  fingerprintID = 0; 
+}
+
+void displayIncorrectGreeting(){
+  display.clearDisplay();
+  display.setTextColor(WHITE);
+  display.setTextSize(2);
+  display.setCursor(0,0);
+  display.print("Incorrect");
+  display.setCursor(0,15);
+  display.display();
+  delay(100);
+  fingerprintID = 0; 
+}
+
+void correctFingerprint() {
+  
+    digitalWrite(ledPinGreen, HIGH);
+    delay(500);
+    digitalWrite(ledPinGreen, LOW);
+    delay(500); 
+    digitalWrite(ledPinGreen, HIGH);
+    delay(500);
+    digitalWrite(ledPinGreen, LOW);
+    delay(500); 
+    digitalWrite(ledPinGreen, HIGH);
+    delay(500);
+    digitalWrite(ledPinGreen, LOW);
+    delay(500); 
+
+} 
+
+void incorrectFingerprint() {
+  
+    digitalWrite(ledPinRed, HIGH);
+    delay(500);
+    digitalWrite(ledPinRed, LOW);
+    delay(500); 
+    digitalWrite(ledPinRed, HIGH);
+    delay(500);
+    digitalWrite(ledPinRed, LOW);
+    delay(500); 
+    digitalWrite(ledPinRed, HIGH);
+    delay(500);
+    digitalWrite(ledPinRed, LOW);
+    delay(500); 
+    
+}
