@@ -6,6 +6,7 @@
 #define OLED_RESET 4
 #include <Adafruit_Fingerprint.h>
 #include <SoftwareSerial.h>
+#include <ezButton.h>
 
 #include <Servo.h>
 Servo myServo;
@@ -20,6 +21,7 @@ SoftwareSerial mySerial(2, 3);
 
 const int ledPinRed = 9;
 const int ledPinGreen = 11;
+ezButton limitSwitch(12);
 
 Adafruit_Fingerprint finger = Adafruit_Fingerprint(&mySerial);
 int fingerprintID = 0;
@@ -33,6 +35,7 @@ void setup(){
   Wire.begin();
   // set the data rate for the sensor serial port
   finger.begin(57600);
+  limitSwitch.setDebounceTime(50);
   
   pinMode(ledPinRed, OUTPUT);
   pinMode(ledPinGreen, OUTPUT);
@@ -105,6 +108,14 @@ void loop(){
   displayIncorrectGreeting();
   incorrectFingerprint(); 
 
+}
+ limitSwitch.loop();
+ int state = limitSwitch.getState();
+ 
+  if(state == LOW) {
+    Serial.println("The limit switch: Touched");
+    myServo.write(90);
+  
 }
 
 }
