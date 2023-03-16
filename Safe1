@@ -73,7 +73,6 @@ void setup() {
 void loop() 
 {
   keyCheck();
-  pWM();
   
   
   
@@ -81,7 +80,7 @@ void loop()
 
 void pWM()
 {
-  if(input_password == password_1){
+  
   
   for (int i=400; i<2500; i++)
   {
@@ -91,7 +90,7 @@ void pWM()
     delayMicroseconds(20000-(i));
   }
   
-  }
+  
 }
 
 void keyCheck() 
@@ -112,6 +111,7 @@ void keyCheck()
         oled.setCursor(0, 10);
         oled.println("Correct");
         oled.display(); 
+        pWM();
 
       } 
       else 
