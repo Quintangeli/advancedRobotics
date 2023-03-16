@@ -1,112 +1,119 @@
-  #include <Wire.h>
-  #include <Adafruit_GFX.h>
-  #include <Adafruit_SSD1306.h>
-  
-  #define SCREEN_WIDTH 128 
-  #define SCREEN_HEIGHT 64
-  
-  Adafruit_SSD1306 oled(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
-  
-  
-  
-  #include <Keypad.h>
-   // the Arduino pin, which connects to the IN pin of relay
-  const int ROW_NUM    = 4; // four rows
-  const int COLUMN_NUM = 4; // four columns
-  
-  char keys[ROW_NUM][COLUMN_NUM] = {
-    {'1','2','3', 'A'},
-    {'4','5','6', 'B'},
-    {'7','8','9', 'C'},
-    {'*','0','#', 'D'}
-  };
-  
-  byte pin_rows[ROW_NUM] = {9, 8, 7, 6}; //connect to the row pinouts of the keypad
-  byte pin_column[COLUMN_NUM] = {5, 4, 3, 2}; //connect to the column pinouts of the keypad
-  
-  Keypad keypad = Keypad( makeKeymap(keys), pin_rows, pin_column, ROW_NUM, COLUMN_NUM );
-  
-  const String password_1 = "1234ABC"; // change your password here
-  const String password_2 = "5642CD";  // change your password here
-  const String password_3 = "4545B";   // change your password here
-  String input_password;
-  
-  void setup() {
-    Serial.begin(9600);
-    input_password.reserve(32); // maximum input characters is 33, change if needed
-  
-  }
-  
-  void loop() {
-    char key = keypad.getKey();
-  
-  
-  
-  
-  if (!oled.begin(SSD1306_SWITCHCAPVCC, 0x3C)) 
-  {
-    Serial.println(F("SSD1306 allocation failed"));
+//working code
+
+#include <SPI.h>
+#include <Wire.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
+#include <Keypad.h>
+
+Adafruit_SSD1306 oled(128, 64, &Wire, 10);   //width, height, &Wire, reset pin
+
+// the Arduino pin, which connects to the IN pin of relay
+const int ROW_NUM    = 4; // four rows
+const int COLUMN_NUM = 4; // four columns
+
+char keys[ROW_NUM][COLUMN_NUM] = {
+  {'1', '2', '3', 'A'},
+  {'4', '5', '6', 'B'},
+  {'7', '8', '9', 'C'},
+  {'*', '0', '#', 'D'}
+};
+
+byte pin_rows[ROW_NUM] = {9, 8, 7, 6}; //connect to the row pinouts of the keypad
+byte pin_column[COLUMN_NUM] = {5, 4, 3, 2}; //connect to the column pinouts of the keypad
+
+Keypad keypad = Keypad( makeKeymap(keys), pin_rows, pin_column, ROW_NUM, COLUMN_NUM );
+
+const String password_1 = "1234ABC"; // change your password here
+
+String input_password;
+
+void setup() {
+  Serial.begin(9600);
+  Serial.println("Begin Setup Function");
+
+  if (!oled.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
+    Serial.println(F("SSD1306 allocation failed \n**This program has ended**"));
     while (true);
-    
-    
-    
   }
+
+  input_password.reserve(32);
+
+  delay(100);         // wait for initializing
+  oled.clearDisplay(); // clear display
+
+  oled.setTextSize(1);          // text size
+  oled.setTextColor(WHITE);     // text color
+  oled.setCursor(0, 10);        // position to display
+  oled.println("The OLED is working - Proceed to loop function"); // text to display
+  oled.display();
+  delay(500);
+  Serial.println("Setup Function Complete");
+
+  //TEST
+  delay(2000);         // wait for initializing
+  oled.clearDisplay(); // clear display
+
+  oled.setTextSize(1);          // text size
+  oled.setTextColor(WHITE);     // text color
+  oled.setCursor(0, 10);        // position to display
+  oled.println("Enter Code then press Pound"); // text to display
+  oled.display(); 
+
+
+}
+
+void loop() 
+{
   
-    delay(2000);         // wait for initializing
-    oled.clearDisplay(); // clear display
   
-    oled.setTextSize(1);          // text size
-    oled.setTextColor(WHITE);     // text color
-    oled.setCursor(0, 10);        // position to display
-    oled.println("Enter Code then press Pound"); // text to display
-    oled.display(); 
+
+  char key = keypad.getKey();
   
-    
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-    if (key){
-      Serial.print(key);
-  
-      if(key == '*') {
-        input_password = ""; // reset the input password
-      } else if(key == '#') {
-        if(input_password == password_1 || input_password == password_2 || input_password == password_3) {
-         
-          oled.println("The password is correct, unlocking the door in 20 seconds");
-          oled.display();
-          delay(000);
-          oled.clearDisplay();
-          oled.setCursor(0, 10); 
-          oled.display();
-          
-          
-        } else {
-          Serial.println("The password is incorrect, try again");
-        }
-  
-        input_password = ""; // reset the input password
-      } else {
-         Serial.println("The password is incorrect, try again");
-          
-          oled.println("The password is incorrect, try again"); // text to display
-          oled.display(); 
-          delay(2000);
-          oled.clearDisplay();
-          oled.setCursor(0, 10); 
-          oled.display();
-          
-        // append new character to input password string
+
+  //CODE
+
+  if (key){
+
+    Serial.print(key);
+    oled.print(key);
+    oled.display();
+
+    if(key == '*') {
+      input_password = ""; // reset the input password
+    } else if(key == '#') {
+      if(input_password == password_1) 
+      {
+        oled.clearDisplay();
+        oled.setCursor(0, 10);
+        oled.println("Correct");
+        oled.display(); 
+        
+
+      } 
+      else 
+      {
+        oled.clearDisplay();
+        oled.setCursor(0,10);
+        oled.println("Incorrect");
+        
+        oled.display(); 
+        
+        input_password = "";
       }
+
+      input_password = ""; // reset the input password
+    } 
+    
+    else 
+    {
+      input_password += key; // append new character to input password string
     }
   }
+
+  //CODE END
+
+
+}
+
+
