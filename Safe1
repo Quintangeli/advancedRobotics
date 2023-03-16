@@ -1,10 +1,11 @@
 //working code
-
 #include <SPI.h>
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 #include <Keypad.h>
+
+
 
 Adafruit_SSD1306 oled(128, 64, &Wire, 10);   //width, height, &Wire, reset pin
 
@@ -24,11 +25,17 @@ byte pin_column[COLUMN_NUM] = {5, 4, 3, 2}; //connect to the column pinouts of t
 
 Keypad keypad = Keypad( makeKeymap(keys), pin_rows, pin_column, ROW_NUM, COLUMN_NUM );
 
-const String password_1 = "1234ABC"; // change your password here
+const String password_1 = "12"; // change your password here
 
 String input_password;
 
+//CODE SERVO START
+int pinservo = 12;
+
 void setup() {
+  
+  pinMode(pinservo, OUTPUT);
+  
   Serial.begin(9600);
   Serial.println("Begin Setup Function");
 
@@ -66,6 +73,25 @@ void setup() {
 void loop() 
 {
   keyCheck();
+  pWM();
+  
+  
+  
+}
+
+void pWM()
+{
+  if(input_password == password_1){
+  
+  for (int i=400; i<2500; i++)
+  {
+    digitalWrite(pinservo,HIGH);
+    delayMicroseconds(i);
+    digitalWrite(pinservo, LOW);
+    delayMicroseconds(20000-(i));
+  }
+  
+  }
 }
 
 void keyCheck() 
