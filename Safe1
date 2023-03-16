@@ -65,16 +65,14 @@ void setup() {
 
 void loop() 
 {
-  
-  
+  keyCheck();
+}
 
+void keyCheck() 
+{
   char key = keypad.getKey();
-  
-
-  //CODE
-
+    //CODE
   if (key){
-
     Serial.print(key);
     oled.print(key);
     oled.display();
@@ -88,7 +86,6 @@ void loop()
         oled.setCursor(0, 10);
         oled.println("Correct");
         oled.display(); 
-        
 
       } 
       else 
@@ -112,8 +109,4 @@ void loop()
   }
 
   //CODE END
-
-
 }
-
-
