@@ -19,31 +19,32 @@ void loop() {
   lapTimer();
   internalReset();
 }
-
+//group 1 ************************************
 void greenLight() {
-  if (lapInProgress) {
+   if (lapInProgress) {
     digitalWrite(ledPinG, HIGH);
-  } else {
+  }
+  else {
     digitalWrite(ledPinG, LOW);
   }
 }
-
+//group 1 ************************************
 void redLight() {
   currentTime = millis();
   if (lapInProgress) {
     digitalWrite(ledPinR, LOW);
   } else {
-    if (currentTime - prevTime > interval) {    //delay every 1 second
-      ledStateR = (ledStateR == LOW) ? HIGH : LOW;    //switch the red led state high/low
+    if (currentTime - prevTime > interval) {        //delay every 1 second
+      ledStateR = (ledStateR == LOW) ? HIGH : LOW;  //switch the red led state high/low
       digitalWrite(ledPinR, ledStateR);
-      prevTime += interval;   //prevTime = prevTime + interval
+      prevTime += interval;  //prevTime = prevTime + interval
     }
   }
 }
-
+//group 2 ************************************
 void sensorUpdate() {
   //Serial.println("sensorUpdate");
-  if (gateCount < 2) {    //after one complete lap - stop updating
+  if (gateCount < 2) {  //after one complete lap - stop updating
     //the following steps take a reading from the ultrasonic sensor
     digitalWrite(trigPin, LOW);
     delayMicroseconds(2);
@@ -52,14 +53,14 @@ void sensorUpdate() {
     digitalWrite(trigPin, LOW);
     duration = pulseIn(echoPin, HIGH);
     distance = duration * .034 / 2;
-    distance = distance / 2.54;   //convert cm to in
+    distance = distance / 2.54;  //convert cm to in
     //Serial.println(distance);
   }
 }
-
+//group 2 ************************************
 void gateUpdate() {
   //Serial.println("gateUpdate");
-  if (gateCount < 2) {    //after one complete lap - stop updating
+  if (gateCount < 2) {  //after one complete lap - stop updating
     if (distance < 20) {
       while (distance < 20) {
         sensorUpdate();
@@ -67,10 +68,10 @@ void gateUpdate() {
       }
       gateCount++;
     }
-    lapInProgress = (gateCount == 1) ? true : false;    //if the gateCount is 1, set lapInProgress to true
+    lapInProgress = (gateCount == 1) ? true : false;  //if the gateCount is 1, set lapInProgress to true
   }
 }
-
+//group 3 ************************************
 void lapTimer() {
   if (complete == false) {
     if (lapInProgress && start == false) {
@@ -89,10 +90,13 @@ void lapTimer() {
     }
   }
 }
-
+//group 4 ************************************
 void internalReset() {
   buttonState = digitalRead(buttonPin);
   if (buttonState == HIGH) {
     //reset all variables
+    lapInProgress = start = complete = false;
+    currentTime = prevTime = duration = timerStart = timerStop = 0;
+    ledStateG = ledStateR = distance = gateCount = buttonState = 0;
   }
 }
