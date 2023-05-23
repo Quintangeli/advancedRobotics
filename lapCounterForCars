@@ -1,0 +1,90 @@
+const int ledPinG = 11, ledPinR = 12, interval = 250, trigPin = 3, echoPin = 2;
+bool lapInProgress, start, complete;
+unsigned long currentTime, prevTime, duration, timerStart, timerStop;
+int ledStateG, ledStateR, distance, gateCount;
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(ledPinG, OUTPUT);
+  pinMode(ledPinR, OUTPUT);
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+}
+
+void loop() {
+  greenLight();
+  redLight();
+  sensorUpdate();
+  gateUpdate();
+  lapTimer();
+}
+
+void greenLight() {
+  if (lapInProgress) {
+    digitalWrite(ledPinG, HIGH);
+  } else {
+    digitalWrite(ledPinG, LOW);
+  }
+}
+
+void redLight() {
+  currentTime = millis();
+  if (lapInProgress) {
+    digitalWrite(ledPinR, LOW);
+  } else {
+    if (currentTime - prevTime > interval) {    //delay every 1 second
+      ledStateR = (ledStateR == LOW) ? HIGH : LOW;    //switch the red led state high/low
+      digitalWrite(ledPinR, ledStateR);
+      prevTime += interval;   //prevTime = prevTime + interval
+    }
+  }
+}
+
+void sensorUpdate() {
+  //Serial.println("sensorUpdate");
+  if (gateCount < 2) {    //after one complete lap - stop updating
+    //the following steps take a reading from the ultrasonic sensor
+    digitalWrite(trigPin, LOW);
+    delayMicroseconds(2);
+    digitalWrite(trigPin, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(trigPin, LOW);
+    duration = pulseIn(echoPin, HIGH);
+    distance = duration * .034 / 2;
+    distance = distance / 2.54;   //convert cm to in
+    //Serial.println(distance);
+  }
+}
+
+void gateUpdate() {
+  //Serial.println("gateUpdate");
+  if (gateCount < 2) {    //after one complete lap - stop updating
+    if (distance < 20) {
+      while (distance < 20) {
+        sensorUpdate();
+        delay(10);
+      }
+      gateCount++;
+    }
+    lapInProgress = (gateCount == 1) ? true : false;    //if the gateCount is 1, set lapInProgress to true
+  }
+}
+
+void lapTimer() {
+  if (complete == false) {
+    if (lapInProgress && start == false) {
+      start = true;
+      timerStart = millis();
+      Serial.print("timerStart - ");
+      Serial.println(timerStart);
+    }
+    if (lapInProgress == false && start) {
+      complete = true;
+      timerStop = millis();
+      Serial.print("timerStop - ");
+      Serial.println(timerStop);
+      Serial.print("Lap Time = ");
+      Serial.println((timerStop - timerStart));
+    }
+  }
+}
