@@ -1,7 +1,7 @@
-const int ledPinG = 11, ledPinR = 12, interval = 250, trigPin = 3, echoPin = 2;
+const int ledPinG = 11, ledPinR = 12, interval = 250, trigPin = 3, echoPin = 2, buttonPin = 10;
 bool lapInProgress, start, complete;
 unsigned long currentTime, prevTime, duration, timerStart, timerStop;
-int ledStateG, ledStateR, distance, gateCount;
+int ledStateG, ledStateR, distance, gateCount, buttonState;
 
 void setup() {
   Serial.begin(9600);
@@ -17,6 +17,7 @@ void loop() {
   sensorUpdate();
   gateUpdate();
   lapTimer();
+  internalReset();
 }
 
 void greenLight() {
@@ -86,5 +87,12 @@ void lapTimer() {
       Serial.print("Lap Time = ");
       Serial.println((timerStop - timerStart));
     }
+  }
+}
+
+void internalReset() {
+  buttonState = digitalRead(buttonPin);
+  if (buttonState == HIGH) {
+    //reset all variables
   }
 }
