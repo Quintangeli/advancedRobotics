@@ -21,7 +21,7 @@ void loop() {
 }
 //group 1 ************************************
 void greenLight() {
-   if (lapInProgress) {
+  if (lapInProgress) {
     digitalWrite(ledPinG, HIGH);
   }
   else {
@@ -30,15 +30,19 @@ void greenLight() {
 }
 //group 1 ************************************
 void redLight() {
-  currentTime = millis();
-  if (lapInProgress) {
-    digitalWrite(ledPinR, LOW);
-  } else {
-    if (currentTime - prevTime > interval) {        //delay every 1 second
-      ledStateR = (ledStateR == LOW) ? HIGH : LOW;  //switch the red led state high/low
-      digitalWrite(ledPinR, ledStateR);
-      prevTime += interval;  //prevTime = prevTime + interval
+  if (gateCount < 2) {
+    currentTime = millis();
+    if (lapInProgress) {
+      digitalWrite(ledPinR, LOW);
+    } else {
+      if (currentTime - prevTime > interval) {        //delay every 1 second
+        ledStateR = (ledStateR == LOW) ? HIGH : LOW;  //switch the red led state high/low
+        digitalWrite(ledPinR, ledStateR);
+        prevTime += interval;  //prevTime = prevTime + interval
+      }
     }
+  } else {
+    digitalWrite(ledPinR, HIGH);
   }
 }
 //group 2 ************************************
@@ -67,6 +71,7 @@ void gateUpdate() {
         delay(10);
       }
       gateCount++;
+      delay(250);
     }
     lapInProgress = (gateCount == 1) ? true : false;  //if the gateCount is 1, set lapInProgress to true
   }
