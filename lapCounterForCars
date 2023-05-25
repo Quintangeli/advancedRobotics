@@ -9,6 +9,11 @@ void setup() {
   pinMode(ledPinR, OUTPUT);
   pinMode(trigPin, OUTPUT);
   pinMode(echoPin, INPUT);
+  sensorUpdate();
+  if (distance == 0) {
+    Serial.println("Check your ultrasonic sensor wires \n *END PROGRAM*");
+    for (;;);
+  }
 }
 
 void loop() {
