@@ -1,0 +1,48 @@
+//\0 is a terminating character when entering a command. this separates the two commands. for example l125\0r50 would move the left servo to 125 and the right servo to 50
+
+#include <Servo.h>
+
+Servo lServo;
+Servo rServo;
+
+int lTarget, rTarget, lMove, rMove, initiator ;
+
+
+void setup() {
+  Serial.begin(9600);
+  lServo.attach(3);
+  rServo.attach(2);
+}
+void loop() {
+  if (Serial.available() > 0) {
+    initiator = Serial.read();
+    if (initiator == 'l') {
+      Serial.println("l was read");
+      lTarget = Serial.parseInt();
+      Serial.println(lTarget);
+    } else if (initiator == 'r') {
+      Serial.println("r was read");
+      rTarget = Serial.parseInt();
+      Serial.println(rTarget);
+    }
+  }
+
+
+  if (lMove < lTarget) {
+    lMove++;
+  } else if (lMove > lTarget) {
+    lMove--;
+  } else {
+    delay(10);
+  }
+  if (rMove < rTarget) {
+    rMove++;
+  } else if (rMove > rTarget) {
+    rMove--;
+  } else {
+    delay(10);
+  }
+  Serial.println(lTarget);
+  lServo.write(lMove);
+  rServo.write(rMove);
+}
