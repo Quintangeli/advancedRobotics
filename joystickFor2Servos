@@ -1,0 +1,64 @@
+//wire a joystick - two pots and a button
+//wire two servos
+#include <Servo.h>
+
+Servo servo1;
+Servo servo2;
+
+const int jsYPin = A0;
+const int jsXPin = A1;
+const int jsBPin = 2;
+
+const int servo1Pin = 3;
+const int servo2Pin = 5;
+
+bool jsBState = 0;
+int jsYState = 0, jsXState = 0;
+int yAxis = 0, xAxis = 0, y = 0, x = 0;
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(jsBPin, INPUT_PULLUP);
+}
+
+void loop() {
+  if (activateServos()) {
+    moveYAxis();
+  }
+
+}
+
+bool activateServos() {
+  //Serial.println(jsBState);
+
+  if (digitalRead(jsBPin) == LOW) {
+    while (digitalRead(jsBPin) == LOW) {
+      delay(10);
+    }
+    jsBState = !jsBState;
+    (jsBState) ? Serial.println("Activated") : Serial.println("Deactivated");
+    delay(500);
+  }
+  if (jsBState == HIGH) {
+    servo1.attach(3);
+    servo2.attach(5);
+  } else if (jsBState == LOW) {
+    servo1.detach();
+    servo2.detach();
+  }
+  return jsBState;
+}
+
+void moveYAxis() {
+  jsYState = analogRead(jsYPin);
+  yAxis = map(jsYState, 0, 1023, 0, 180);
+  if (y == yAxis) {
+    delay(10);
+  } else if (y < yAxis) {
+    Serial.println(y++);
+    servo1.write(y);
+  } else if (y > yAxis) {
+    Serial.println(y--);
+    servo1.write(y);
+  }
+}
